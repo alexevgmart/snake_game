@@ -1,4 +1,51 @@
-#include "include.h"
+#include <ncurses.h>
+#include <pthread.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <time.h>
+#include <stdint.h>
+#include <arpa/inet.h>
+#include <string.h>
+#include <sys/socket.h>
+
+#define LEN 5
+
+typedef struct {
+	uint8_t y;
+	uint8_t x;
+} point;
+
+typedef struct {
+    uint8_t user_code;
+    point tail[5];
+    int direction;
+} tail_info;
+
+typedef struct {
+    uint8_t user_code;
+    uint8_t exit_code;
+    int direction;
+    point apple;
+    uint8_t generated_apple;
+} packet;
+
+typedef struct {
+    int sockfd;
+    uint8_t client_code;
+    point position;
+    packet packet;
+    int tail_len;
+    point* tail;
+} client;
+
+int x = 80, y = 24;
+
+client* clients;
+packet user_packet;
+int cd;
+
+int users = 1;
+int users_alive = 1;
 
 void *direct(void){
 	int tmp;
